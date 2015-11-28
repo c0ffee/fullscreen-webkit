@@ -42,15 +42,24 @@
 
 static void destroyWindowCb(GtkWidget* widget, GtkWidget* window);
 static gboolean closeWebViewCb(WebKitWebView* webView, GtkWidget* window);
+gboolean update_website(gpointer data);
 
+const char *url = NULL;
 int main(int argc, char* argv[])
 {
+    int refreshtime;
+
     // Initialize GTK+
     gtk_init(&argc, &argv);
-
+    if (argc == 3) {
+        url = argv[1];
+        refreshtime = atoi(argv[2]);
+    } else {
+        return 1;
+    }
     // Create an 640x480 window that will contain the browser instance
     GtkWidget *main_window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(main_window), 640, 480);
+    gtk_window_set_default_size(GTK_WINDOW(main_window), 1920, 1080);
     gtk_window_fullscreen(GTK_WINDOW(main_window));
 
     // Create a browser instance
@@ -71,7 +80,7 @@ int main(int argc, char* argv[])
     gtk_container_add(GTK_CONTAINER(main_window), scrolledWindow);
 
     // Load a web page into the browser instance
-    webkit_web_view_load_uri(webView, argv[1]);
+    webkit_web_view_load_uri(webView, url);
 
     // Make sure that when the browser area becomes visible, it will get mouse
     // and keyboard events
@@ -79,6 +88,8 @@ int main(int argc, char* argv[])
 
     // Make sure the main window and all its contents are visible
     gtk_widget_show_all(main_window);
+
+    gtk_timeout_add(refreshtime, update_website, webView);
 
     // Run the main GTK+ event loop
     gtk_main();
@@ -96,3 +107,10 @@ static gboolean closeWebViewCb(WebKitWebView* webView, GtkWidget* window)
     gtk_widget_destroy(window);
     return TRUE;
 }
+
+gboolean update_website(gpointer data) {
+    webkit_web_view_load_uri( (WebKitWebView*) data, url);
+    return TRUE;
+}
+
+
