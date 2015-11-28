@@ -44,10 +44,10 @@ static void destroyWindowCb(GtkWidget* widget, GtkWidget* window);
 static gboolean closeWebViewCb(WebKitWebView* webView, GtkWidget* window);
 gboolean update_website(gpointer data);
 
-const char *url = NULL;
 int main(int argc, char* argv[])
 {
     int refreshtime;
+    const char *url = NULL;
 
     // Initialize GTK+
     gtk_init(&argc, &argv);
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     // Create a scrollable area, and put the browser instance into it
     GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow),
-            GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_container_add(GTK_CONTAINER(scrolledWindow), GTK_WIDGET(webView));
 
     // Set up callbacks so that if either the main window or the browser instance is
@@ -109,7 +109,7 @@ static gboolean closeWebViewCb(WebKitWebView* webView, GtkWidget* window)
 }
 
 gboolean update_website(gpointer data) {
-    webkit_web_view_load_uri( (WebKitWebView*) data, url);
+    webkit_web_view_reload( (WebKitWebView*) data);
     return TRUE;
 }
 
