@@ -1,6 +1,6 @@
 
 /* Compile with:
- * gcc fullscreen-webkit.c `pkg-config webkit-1.0 --cflags --libs` -o fullscreen-webkit
+ * gcc fullscreen-webkit.c `pkg-config webkit-2.0 --cflags --libs` -o fullscreen-webkit
  *
  * This example code can be found here:
  * https://live.gnome.org/WebKitGtk/ProgrammingGuide/Tutorial
@@ -37,7 +37,7 @@
  */
 
 #include <gtk/gtk.h>
-#include <webkit/webkit.h>
+#include <webkit2/webkit2.h>
 
 
 static void destroyWindowCb(GtkWidget* widget, GtkWidget* window);
@@ -65,11 +65,7 @@ int main(int argc, char* argv[])
     // Create a browser instance
     WebKitWebView *webView = WEBKIT_WEB_VIEW(webkit_web_view_new());
 
-    // Create a scrollable area, and put the browser instance into it
-    GtkWidget *scrolledWindow = gtk_scrolled_window_new(NULL, NULL);
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledWindow),
-                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-    gtk_container_add(GTK_CONTAINER(scrolledWindow), GTK_WIDGET(webView));
+    gtk_container_add(GTK_CONTAINER(main_window), GTK_WIDGET(webView));
 
     // Set up callbacks so that if either the main window or the browser instance is
     // closed, the program will exit
@@ -77,7 +73,7 @@ int main(int argc, char* argv[])
     g_signal_connect(webView, "close-web-view", G_CALLBACK(closeWebViewCb), main_window);
 
     // Put the scrollable area into the main window
-    gtk_container_add(GTK_CONTAINER(main_window), scrolledWindow);
+    gtk_container_add(GTK_CONTAINER(main_window), GTK_WIDGET(webView));
 
     // Load a web page into the browser instance
     webkit_web_view_load_uri(webView, url);
@@ -89,7 +85,7 @@ int main(int argc, char* argv[])
     // Make sure the main window and all its contents are visible
     gtk_widget_show_all(main_window);
 
-    gtk_timeout_add(refreshtime, update_website, webView);
+    g_timeout_add_seconds(refreshtime, update_website, webView);
 
     // Run the main GTK+ event loop
     gtk_main();
